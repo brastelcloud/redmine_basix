@@ -27,9 +27,7 @@ module Basix
         end
         tracker_ids = Tracker.all.map(&:id)
         cf_phone_number.safe_attributes = {tracker_ids: tracker_ids}
-        if cf_phone_number.save then
-          logger.error "OK OK OK"
-        else
+        if not cf_phone_number.save then
           logger.error "Failed to update custom_field phone_number list of trackers after creation of #{self.name}"
         end
       end
