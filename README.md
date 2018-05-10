@@ -11,3 +11,5 @@ Ex:
   cd redmine/plugins/
   git clone https://github.com/brastelcloud/redmine_basix
 ```
+
+Currently, the only purpose of this plugin is to permit automation of integration configuration due to limitations in the Redmine REST API.
