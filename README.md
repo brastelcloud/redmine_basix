@@ -2,7 +2,7 @@
 
 This is a Redmine plugin for integration with Basix PBX.
 
-To install it, to as usual:
+To install it, do it as usual:
   - go to your redmine/plugins folder
   - clone this repo
   
