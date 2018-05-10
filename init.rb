@@ -7,6 +7,6 @@ Redmine::Plugin.register :basix do
   author 'Brastel Co. Ltd.'
   description 'Redmine Plugin for Integration with Basix'
   version '1.0.0'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/brastelcloud/redmine_basix'
+  author_url 'http://www.basix.jp'
 end
