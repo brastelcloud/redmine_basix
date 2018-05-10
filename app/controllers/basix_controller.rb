@@ -46,16 +46,16 @@ class BasixController < ApplicationController
 
     priority = Enumeration.find_by name: params[:issue_priority_name], type: "IssuePriority"
     if not priority then
-      render json: {success: false, "error": "could not find priority named #{params[:issue_priority_name]}"}
+      render json: {success: false, error: "could not find priority named #{params[:issue_priority_name]}"}
       return
     end
 
     tracker = Tracker.find_by name: params[:issue_tracker_name]
     if not tracker then
-      render json: {success: false, "error": "could not find tracker named #{params[:issue_tracker_name]}"}
+      render json: {success: false, error: "could not find tracker named #{params[:issue_tracker_name]}"}
       return
     end
 
-    render json: {issue_phone_number_custom_field_id: cf_phone_number.id, issue_priority_id: priority.id, issue_tracker_id: tracker.id, }
+    render json: {success: true, data: {issue_phone_number_custom_field_id: cf_phone_number.id, issue_priority_id: priority.id, issue_tracker_id: tracker.id, }}
   end
 end
