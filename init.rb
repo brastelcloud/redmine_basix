@@ -1,3 +1,4 @@
+require_dependency 'basix/hooks'
 
 unless Issue.included_modules.include? Basix::TrackerPatch
   Tracker.send(:include, Basix::TrackerPatch)
