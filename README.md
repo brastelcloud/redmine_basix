@@ -12,4 +12,6 @@ Ex:
   git clone https://github.com/brastelcloud/redmine_basix
 ```
 
-Currently, the only purpose of this plugin is to permit automation of integration configuration due to limitations in the Redmine REST API.
+Currently, the main purpose of this plugin is to permit automation of integration configuration due to limitations in the Redmine REST API.
+
+But it also converts wav, mp3, ogg links in comments into audio tags so that the files can be listened to without leaving the current page.
