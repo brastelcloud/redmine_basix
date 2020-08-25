@@ -16,3 +16,5 @@ Ex:
 Currently, the main purpose of this plugin is to permit automation of integration configuration due to limitations in the Redmine REST API.
 
 But it also converts comments' wav, mp3, ogg links to audio tags so that the files can be listened to without leaving the current page.
+
+To remove this plugin just delete folder redmine/plugins/redmine_basix
