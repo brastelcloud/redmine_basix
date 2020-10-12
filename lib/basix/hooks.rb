@@ -6,10 +6,15 @@ $(document).ready(function() {
   try {
     $('a').each(function() {
       var re = /basix\\/(voicemail|callrecording)\\/.*\\.(wav|mp3)/
-      if($(this).attr('href').match(re)) {
-        $(this).replaceWith(\"<audio controls preload='none'><source src=\" + $(this).attr('href') + '/></audio>')
+      try {
+        var href = $(this).attr('href')
+        if(href && href.match(re)) {
+          $(this).replaceWith(\"<audio controls preload='none'><source src=\" + href + '/></audio>')
+        }
+      } catch(err) {
+        console.log(`Failed when processing audio link: ${err}`) 
       }
-    });
+    })
   } catch (err) {
     console.log(`Failed when processing audio links: ${err}`) 
   }
