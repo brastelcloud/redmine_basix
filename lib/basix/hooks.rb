@@ -3,13 +3,16 @@ module Basix
     def view_layouts_base_html_head(context)
       js = "
 $(document).ready(function() {
-  $('a').each(function() {
-    var audio_suffixes = ['wav', 'mp3', 'ogg'];
-    var suffix = $(this).attr('href').split('.').pop();
-    if(audio_suffixes.indexOf(suffix) >= 0) {
-      $(this).replaceWith(\"<audio controls preload='none'><source src=\" + $(this).attr('href') + '/></audio>')
-    }
-  });
+  try {
+    $('a').each(function() {
+      var re = /basix\\/(voicemail|callrecording)\\/.*\\.(wav|mp3)/
+      if($(this).attr('href').match(re)) {
+        $(this).replaceWith(\"<audio controls preload='none'><source src=\" + $(this).attr('href') + '/></audio>')
+      }
+    });
+  } catch (err) {
+    console.log(`Failed when processing audio links: ${err}`) 
+  }
 })
 "
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
