@@ -1,5 +1,5 @@
 
-if Rails.version > '6.0' && Rails.autoloaders.zeitwerk_enabled?
+if Gem::Version.new(Rails.version) >= Gem::Version.new('6.0') && Rails.autoloaders.zeitwerk_enabled?
   unless Tracker.included_modules.include? Basix::TrackerPatch
     Tracker.send(:include, Basix::TrackerPatch)
   end
