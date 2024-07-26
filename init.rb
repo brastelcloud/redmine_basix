@@ -1,7 +1,14 @@
-require_dependency 'basix/hooks'
 
-unless Issue.included_modules.include? Basix::TrackerPatch
-  Tracker.send(:include, Basix::TrackerPatch)
+if Rails.version > '6.0' && Rails.autoloaders.zeitwerk_enabled?
+  unless Tracker.included_modules.include? Basix::TrackerPatch
+    Tracker.send(:include, Basix::TrackerPatch)
+  end
+else
+  require_dependency 'basix/hooks'
+
+  unless Tracker.included_modules.include? Basix::TrackerPatch
+    Tracker.send(:include, Basix::TrackerPatch)
+  end
 end
 
 Redmine::Plugin.register :redmine_basix do
