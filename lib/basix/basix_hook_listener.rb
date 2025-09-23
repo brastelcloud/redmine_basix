@@ -1,25 +1,93 @@
 module Basix
   class BasixHookListener < Redmine::Hook::ViewListener
     def view_layouts_base_html_head(context)
-      js = "
-$(document).ready(function() {
-  try {
-    $('a').each(function() {
-      var re = /basix\\/(voicemail|callrecording)\\/.*\\.(wav|mp3)/
-      try {
-        var href = $(this).attr('href')
-        if(href && href.match(re)) {
-          $(this).replaceWith(\"<audio controls preload='none'><source src=\" + href + '/></audio>')
+      user = User.current
+      return '' unless user && user.logged?
+
+      current_user_id = user.id
+      base_uri = Redmine::Utils.relative_url_root
+
+      js_template = <<~'JS'
+        function showFlashMessage(type, message) {
+          var flashDiv = $('<div class="flash ' + type + '"></div>');
+          var closeButton = $('<a href="#" class="close">×</a>');
+          closeButton.on('click', function(e) {
+            e.preventDefault();
+            $(this).parent().fadeOut();
+          });
+          flashDiv.append(closeButton).append(message);
+
+          $('#flash-messages').append(flashDiv);
+
+          setTimeout(function() {
+            flashDiv.fadeOut();
+          }, 5000);
         }
-      } catch(err) {
-        console.log(`Failed when processing audio link: ${err}`) 
-      }
-    })
-  } catch (err) {
-    console.log(`Failed when processing audio links: ${err}`) 
-  }
-})
-"
+
+        $(document).ready(function() {
+          var currentUserId = %{current_user_id};
+          var baseUri = '%{base_uri}';
+
+          try {
+            $('a').each(function() {
+              var $this = $(this);
+              var href = $this.attr('href');
+
+              if (!href) {
+                return;
+              }
+
+              var audioRe = /basix\/(voicemail|callrecording)\/.*\.(wav|mp3)/;
+              if (href.match(audioRe)) {
+                try {
+                  $this.replaceWith("<audio controls preload='none'><source src='" + href + "'/></audio>");
+                } catch(err) {
+                  console.log('Failed when processing audio link: ' + err);
+                }
+                return;
+              }
+
+              var userLinkRegex = new RegExp('^' + baseUri + '/users/(\\d+)$');
+              var match = href.match(userLinkRegex);
+              if (match) {
+                var userId = parseInt(match[1], 10);
+                if (userId !== currentUserId) {
+                  var icon = $('<span class="phone-icon" style="cursor: pointer;" data-user-id="' + userId + '" data-user-name="' + $this.text() + '"> &#9742;</span>');
+                  $this.after(icon);
+                }
+              }
+            });
+          } catch (err) {
+            console.log('Failed when processing links: ' + err);
+          }
+
+          $(document).on('click', '.phone-icon', function() {
+            var $this = $(this);
+            var userName = $this.data('userName');
+            var userId = $this.data('userId');
+            if (confirm('Do you really want to call ' + userName + '?')) {
+              $.ajax({
+                url: baseUri + '/basix/call',
+                type: 'POST',
+                data: { user_id_to_call: userId },
+                success: function(response) {
+                  if (response.success) {
+                    alert(response.msg);
+                  } else {
+                    alert('Error: ' + (response.msg || 'Failed to initiate call.'));
+                  }
+                },
+                error: function() {
+                  alert('Error communicating with the server.');
+                }
+              });
+            }
+          });
+        });
+      JS
+
+      js = js_template % { current_user_id: current_user_id, base_uri: base_uri }
+
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
     end
   end

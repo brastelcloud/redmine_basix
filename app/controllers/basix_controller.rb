@@ -1,8 +1,13 @@
 class BasixController < ApplicationController
   unloadable
 
-  before_action :require_admin
+  before_action :require_admin, except: [:call]
+  skip_before_action :verify_authenticity_token, only: [:call]
   accept_api_auth :configure_integration
+
+  def call
+    render json: {success: true, msg: "Call initiated for user #{params[:user_id_to_call]}"}
+  end
 
   def configure_integration
     cf_phone_number = CustomField.find_by name: 'phone_number', type: 'IssueCustomField'
