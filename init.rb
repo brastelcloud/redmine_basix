@@ -12,4 +12,7 @@ Redmine::Plugin.register :redmine_basix do
   version '1.1.0'
   url 'https://github.com/brastelcloud/redmine_basix'
   author_url 'http://www.basix.jp'
+
+  settings default: {'api_uri' => '', 'api_domain' => '', 'api_token' => ''},
+           partial: 'settings/basix_settings'
 end

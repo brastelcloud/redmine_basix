@@ -1,3 +1,8 @@
+require 'net/http'
+require 'uri'
+require 'base64'
+require 'json'
+
 class BasixController < ApplicationController
   unloadable
 
@@ -6,7 +11,62 @@ class BasixController < ApplicationController
   accept_api_auth :configure_integration
 
   def call
-    render json: {success: true, msg: "Call initiated for user #{params[:user_id_to_call]}"}
+    settings = Setting.plugin_redmine_basix
+    api_uri = settings['api_uri']
+
+    if api_uri.blank?
+      render json: { success: false, msg: "API URI is not configured in the plugin settings." }
+      return
+    end
+
+    begin
+      caller = User.find(params[:caller_user_id])
+      callee = User.find(params[:callee_user_id])
+      project = Project.find(params[:project_id])
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { success: false, msg: "Could not find user or project." }
+      return
+    end
+
+    # Check project membership
+    caller_is_member = caller.projects.include?(project)
+    callee_is_member = callee.projects.include?(project)
+
+    payload = {
+      user_name: caller.login,
+      destination: callee.login
+    }
+
+    if caller_is_member && !callee_is_member
+      payload[:group_name] = project.name
+    end
+
+    begin
+      uri = URI.parse(api_uri + '/call_user')
+      http = Net::HTTP.new(uri.host, uri.port)
+      if uri.scheme == 'https'
+        http.use_ssl = true
+        if Rails.env.development?
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+      end
+
+      request = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+      
+      api_domain = settings['api_domain']
+      api_token = settings['api_token']
+      auth = Base64.strict_encode64("#{api_domain}:#{api_token}")
+      request['Authorization'] = "Basic #{auth}"
+      
+      request.body = payload.to_json
+      
+      response = http.request(request)
+
+      # Return the response from the external API to the frontend
+      render json: response.body
+    rescue => e
+      render json: { success: false, msg: "An error occurred while making the API call: #{e.message}" }
+    end
   end
 
   def configure_integration

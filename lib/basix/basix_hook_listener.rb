@@ -6,6 +6,7 @@ module Basix
 
       current_user_id = user.id
       base_uri = Redmine::Utils.relative_url_root
+      project_id = context[:project]&.id || 'null'
 
       js_template = <<~'JS'
         function showFlashMessage(type, message) {
@@ -27,6 +28,7 @@ module Basix
         $(document).ready(function() {
           var currentUserId = %{current_user_id};
           var baseUri = '%{base_uri}';
+          var projectId = %{project_id};
 
           try {
             $('a').each(function() {
@@ -52,7 +54,7 @@ module Basix
               if (match) {
                 var userId = parseInt(match[1], 10);
                 if (userId !== currentUserId) {
-                  var icon = $('<span class="phone-icon" style="cursor: pointer;" data-user-id="' + userId + '" data-user-name="' + $this.text() + '"> &#9742;</span>');
+                  var icon = $('<span class="phone-icon" style="cursor: pointer; color: green;" data-user-id="' + userId + '" data-user-name="' + $this.text() + '"> &#128222;</span>');
                   $this.after(icon);
                 }
               }
@@ -69,7 +71,7 @@ module Basix
               $.ajax({
                 url: baseUri + '/basix/call',
                 type: 'POST',
-                data: { user_id_to_call: userId },
+                data: { caller_user_id: currentUserId, callee_user_id: userId, project_id: projectId },
                 success: function(response) {
                   if (response.success) {
                     alert(response.msg);
@@ -86,7 +88,7 @@ module Basix
         });
       JS
 
-      js = js_template % { current_user_id: current_user_id, base_uri: base_uri }
+      js = js_template % { current_user_id: current_user_id, base_uri: base_uri, project_id: project_id }
 
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
     end
