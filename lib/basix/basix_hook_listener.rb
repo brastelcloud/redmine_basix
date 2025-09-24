@@ -91,21 +91,29 @@ module Basix
             var $this = $(this);
             var userName = $this.data('userName');
             var userId = $this.data('userId');
-            if (confirm('Do you really want to call ' + userName + '?')) {
-              var data;
-              if (userHasProjectGroupMemberRole) {
-                data = {
-                  destination: 'user://' + userId,
-                  user_name: currentUserLogin,
-                  group_name: projectName,
-                  project_id: projectId
-                };
-              } else {
-                data = {
-                  destination: projectName,
-                  user_name: currentUserLogin
-                };
-              }
+
+            var confirmName;
+            var data;
+
+            if (issueId && !userHasProjectGroupMemberRole) {
+              // Call project
+              confirmName = projectName;
+              data = {
+                destination: projectName,
+                user_name: currentUserLogin
+              };
+            } else {
+              // Call user
+              confirmName = userName;
+              data = {
+                destination: 'user://' + userId,
+                user_name: currentUserLogin,
+                group_name: projectName,
+                project_id: projectId
+              };
+            }
+
+            if (confirm('Do you really want to call ' + confirmName + '?')) {
               $.ajax({
                 url: baseUri + '/basix/call_user',
                 type: 'POST',
