@@ -1,0 +1,19 @@
+<p>
+  <label>API URI</label>
+  <%= text_field_tag 'settings[api_uri]', @settings['api_uri'], size: 60 %>
+</p>
+
+<p>
+  <label>API Domain</label>
+  <%= text_field_tag 'settings[api_domain]', @settings['api_domain'], size: 30 %>
+</p>
+
+<p>
+  <label>API Token</label>
+  <%= password_field_tag 'settings[api_token]', @settings['api_token'], size: 60 %>
+</p>
+
+<p>
+  <label>Project Group Member Role</label>
+  <%= text_field_tag 'settings[project_group_member_role]', @settings['project_group_member_role'], size: 60 %>
+</p>
