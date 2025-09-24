@@ -12,3 +12,8 @@
   <label>API Token</label>
   <%= password_field_tag 'settings[api_token]', @settings['api_token'], size: 60 %>
 </p>
+
+<p>
+  <label>Project Group Member Role</label>
+  <%= text_field_tag 'settings[project_group_member_role]', @settings['project_group_member_role'], size: 60 %>
+</p>

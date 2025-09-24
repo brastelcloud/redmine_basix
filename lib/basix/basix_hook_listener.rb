@@ -6,12 +6,19 @@ module Basix
 
       current_user_id = user.id
       base_uri = Redmine::Utils.relative_url_root
-      project_id = context[:project]&.id || 'null'
+      project = context[:project]
+      project_id = project&.id || 'null'
+      project_name = project&.name || ''
 
       # Get issue_id from the URL if on an issue page
       issue_id = 'null'
-      if context[:controller].is_a?(IssuesController) && context[:action] == 'show'
-        issue_id = context[:issue].id
+      if context[:controller].controller_name == 'issues' && context[:controller].action_name == 'show'
+        issue_id = context[:request].params[:id] || 'null'
+      end
+
+      user_has_role = false
+      if project && Setting.plugin_redmine_basix['project_group_member_role'].present?
+        user_has_role = user.roles_for_project(project).any? { |role| role.name.downcase == Setting.plugin_redmine_basix['project_group_member_role'].downcase }
       end
 
       js_template = <<~'JS'
@@ -35,7 +42,9 @@ module Basix
           var currentUserId = %{current_user_id};
           var baseUri = '%{base_uri}';
           var projectId = %{project_id};
+          var projectName = %{project_name};
           var issueId = %{issue_id};
+          var userHasProjectGroupMemberRole = %{user_has_role};
 
           try {
             $('a').each(function() {
@@ -61,7 +70,13 @@ module Basix
               if (match) {
                 var userId = parseInt(match[1], 10);
                 if (userId !== currentUserId) {
-                  var icon = $('<span class="phone-icon" style="cursor: pointer; color: green !important; font-size: 1.2em;" title="Call me" data-user-id="' + userId + '" data-user-name="' + $this.text() + '"> &#9742;</span>');
+                  var title = 'Call ' + $this.text();
+
+                  // if we are in a isssue/ID page, if the current user is not a member, change to call the group
+                  if (issueId && !userHasProjectGroupMemberRole) {
+                    title = 'Call ' + projectName;
+                  }
+                  var icon = $('<span class="phone-icon" style="cursor: pointer; color: green !important; font-size: 1.2em;" title="' + title + '" data-user-id="' + userId + '" data-user-name="' + $this.text() + '"> &#9742;</span>');
                   $this.after(icon);
                 }
               }
@@ -76,7 +91,7 @@ module Basix
             var userId = $this.data('userId');
             if (confirm('Do you really want to call ' + userName + '?')) {
               $.ajax({
-                url: baseUri + '/basix/call',
+                url: baseUri + '/basix/call_user',
                 type: 'POST',
                 data: { caller_user_id: currentUserId, callee_user_id: userId, project_id: projectId, issue_id: issueId },
                 success: function(response) {
@@ -95,7 +110,7 @@ module Basix
         });
       JS
 
-      js = js_template % { current_user_id: current_user_id, base_uri: base_uri, project_id: project_id, issue_id: issue_id }
+      js = js_template % { current_user_id: current_user_id, base_uri: base_uri, project_id: project_id, project_name: project_name.to_json, issue_id: issue_id, user_has_role: user_has_role }
 
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
     end

@@ -6,11 +6,11 @@ require 'json'
 class BasixController < ApplicationController
   unloadable
 
-  before_action :require_admin, except: [:call]
-  skip_before_action :verify_authenticity_token, only: [:call]
+  before_action :require_admin, except: [:call_user]
+  skip_before_action :verify_authenticity_token, only: [:call_user]
   accept_api_auth :configure_integration
 
-  def call
+  def call_user
     settings = Setting.plugin_redmine_basix
     api_uri = settings['api_uri']
 

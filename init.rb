@@ -9,10 +9,10 @@ Redmine::Plugin.register :redmine_basix do
   name 'Basix plugin'
   author 'Brastel Co. Ltd.'
   description 'Redmine Plugin for Integration with Basix'
-  version '1.1.0'
+  version '1.2.0'
   url 'https://github.com/brastelcloud/redmine_basix'
   author_url 'http://www.basix.jp'
 
-  settings default: {'api_uri' => '', 'api_domain' => '', 'api_token' => ''},
+  settings default: {'api_uri' => '', 'api_domain' => '', 'api_token' => '', 'project_group_member_role' => ''},
            partial: 'settings/basix_settings'
 end
