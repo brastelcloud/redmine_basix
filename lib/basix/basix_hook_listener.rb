@@ -24,7 +24,7 @@ module Basix
 
       js_template = <<~'JS'
         function showFlashMessage(type, message) {
-          var flashDiv = $('<div class="flash " + type + ""></div>');
+          var flashDiv = $('<div class="flash ' + type + '"></div>');
           var closeButton = $('<a href="#" class="close">×</a>');
           closeButton.on('click', function(e) {
             e.preventDefault();
@@ -39,9 +39,20 @@ module Basix
           }, 5000);
         }
 
+        function showBasixNotification(message) {
+          $('#basix-notify-message').text(message);
+          $('#basix-notify-modal').show();
+        }
+
         $(document).ready(function() {
-          var modal_html = '<div id="basix-confirm-modal" style="display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%%; height: 100%%; background-color: rgba(0,0,0,0.5);"><div style="position: fixed; top: 50%%; left: 50%%; transform: translate(-50%%, -50%%); background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"><p id="basix-confirm-message"></p><button id="basix-confirm-yes">Yes</button> <button id="basix-confirm-no">No</button></div></div>';
-          $('body').append(modal_html);
+          var confirm_modal_html = '<div id="basix-confirm-modal" style="display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%%; height: 100%%; background-color: rgba(0,0,0,0.5);"><div style="position: fixed; top: 50%%; left: 50%%; transform: translate(-50%%, -50%%); background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"><p id="basix-confirm-message"></p><button id="basix-confirm-yes">Yes</button> <button id="basix-confirm-no">No</button></div></div>';
+          var notify_modal_html = '<div id="basix-notify-modal" style="display: none; position: fixed; z-index: 1001; top: 0; left: 0; width: 100%%; height: 100%%; background-color: rgba(0,0,0,0.5);"><div style="position: fixed; top: 50%%; left: 50%%; transform: translate(-50%%, -50%%); background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"><p id="basix-notify-message"></p><button id="basix-notify-ok">OK</button></div></div>';
+          $('body').append(confirm_modal_html);
+          $('body').append(notify_modal_html);
+
+          $('#basix-notify-ok').on('click', function() {
+            $('#basix-notify-modal').hide();
+          });
 
           var currentUserId = %{current_user_id};
           var currentUserLogin = %{current_user_login};
@@ -128,13 +139,13 @@ module Basix
                 data: data,
                 success: function(response) {
                   if (response.success) {
-                    alert(response.msg);
+                    showBasixNotification(response.msg);
                   } else {
-                    alert('Error: ' + (response.msg || 'Failed to initiate call.'));
+                    showBasixNotification('Error: ' + (response.msg || 'Failed to initiate call.'));
                   }
                 },
                 error: function() {
-                  alert('Error communicating with the server.');
+                  showBasixNotification('Error communicating with the server.');
                 }
               });
             });
