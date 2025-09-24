@@ -103,32 +103,61 @@ module Basix
             console.log('Failed when processing links: ' + err);
           }
 
-          $(document).on('click', '.phone-icon', function() {
+          try {
+              $('div.string_cf:has(div.label:contains("phone_number")) div.value').each(function() {
+                  var $valueDiv = $(this);
+                  $valueDiv.css('display', 'inline-block');
+                  var phoneNumber = $valueDiv.text().trim();
+
+                  if (phoneNumber && userHasProjectGroupMemberRole) {
+                      var title = 'Call ' + phoneNumber;
+                      var icon = ' <span class="phone-icon-details" style="cursor: pointer; color: green !important; font-size: 1.2em;" title="' + title + '" data-phone-number="' + phoneNumber + '"> &#9742;</span>';
+                      $valueDiv.after(icon);
+                  }
+              });
+          } catch (err) {
+              console.log('Failed when processing phone_number: ' + err);
+          }
+
+
+          $(document).on('click', '.phone-icon, .phone-icon-details', function() {
             var $this = $(this);
-            var userName = $this.data('userName');
-            var userId = $this.data('userId');
-
             var confirmName;
-            var data;
+            var data = {};
 
-            if (issueId && !userHasProjectGroupMemberRole) {
-              // Call project
-              confirmName = projectName;
+            var phoneNumber = $this.data('phoneNumber');
+
+            if (phoneNumber) { // This is the new phone icon
+              confirmName = phoneNumber;
               data = {
-                destination: projectName,
-                user_name: currentUserLogin,
-                user_email: currentUserEmail
-              };
-            } else {
-              // Call user
-              confirmName = userName;
-              data = {
-                destination: 'user://' + userId,
+                destination: phoneNumber,
                 user_name: currentUserLogin,
                 user_email: currentUserEmail,
-                group_name: projectName,
-                project_id: projectId
+                group_name: projectName
               };
+            } else { // This is the existing user phone icon
+              var userName = $this.data('userName');
+              var userId = $this.data('userId');
+
+              if (issueId && !userHasProjectGroupMemberRole) {
+                // Call project
+                confirmName = projectName;
+                data = {
+                  destination: projectName,
+                  user_name: currentUserLogin,
+                  user_email: currentUserEmail
+                };
+              } else {
+                // Call user
+                confirmName = userName;
+                data = {
+                  destination: 'user://' + userId,
+                  user_name: currentUserLogin,
+                  user_email: currentUserEmail,
+                  group_name: projectName,
+                  project_id: projectId
+                };
+              }
             }
 
             // Show custom confirm
