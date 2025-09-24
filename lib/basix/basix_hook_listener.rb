@@ -5,6 +5,7 @@ module Basix
       return '' unless user && user.logged?
 
       current_user_id = user.id
+      current_user_login = user.login
       base_uri = Redmine::Utils.relative_url_root
       project = context[:project]
       project_id = project&.id || 'null'
@@ -40,6 +41,7 @@ module Basix
 
         $(document).ready(function() {
           var currentUserId = %{current_user_id};
+          var currentUserLogin = %{current_user_login};
           var baseUri = '%{base_uri}';
           var projectId = %{project_id};
           var projectName = %{project_name};
@@ -90,10 +92,24 @@ module Basix
             var userName = $this.data('userName');
             var userId = $this.data('userId');
             if (confirm('Do you really want to call ' + userName + '?')) {
+              var data;
+              if (userHasProjectGroupMemberRole) {
+                data = {
+                  destination: 'user://' + userId,
+                  user_name: currentUserLogin,
+                  group_name: projectName,
+                  project_id: projectId
+                };
+              } else {
+                data = {
+                  destination: projectName,
+                  user_name: currentUserLogin
+                };
+              }
               $.ajax({
                 url: baseUri + '/basix/call_user',
                 type: 'POST',
-                data: { caller_user_id: currentUserId, callee_user_id: userId, project_id: projectId, issue_id: issueId },
+                data: data,
                 success: function(response) {
                   if (response.success) {
                     alert(response.msg);
@@ -110,7 +126,7 @@ module Basix
         });
       JS
 
-      js = js_template % { current_user_id: current_user_id, base_uri: base_uri, project_id: project_id, project_name: project_name.to_json, issue_id: issue_id, user_has_role: user_has_role }
+      js = js_template % { current_user_id: current_user_id, current_user_login: current_user_login.to_json, base_uri: base_uri, project_id: project_id, project_name: project_name.to_json, issue_id: issue_id, user_has_role: user_has_role }
 
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
     end

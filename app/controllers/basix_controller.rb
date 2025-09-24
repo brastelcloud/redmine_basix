@@ -19,41 +19,36 @@ class BasixController < ApplicationController
       return
     end
 
-    begin
-      caller = User.find(params[:caller_user_id])
-      callee = User.find(params[:callee_user_id])
-      project = Project.find(params[:project_id]) if params[:project_id].present? && params[:project_id] != 'null'
-      issue = Issue.find(params[:issue_id]) if params[:issue_id].present? && params[:issue_id] != 'null'
-    rescue ActiveRecord::RecordNotFound => e
-      render json: { success: false, msg: "Could not find user, project, or issue: #{e.message}" }
-      return
-    end
+    destination = params[:destination]
+    user_name = params[:user_name]
+    group_name = params[:group_name]
+    project_id = params[:project_id]
 
-    # Determine destination based on new rules
-    destination = nil
-    cf_phone = CustomField.find_by(name: 'phone_number') # Assuming 'phone_number' custom field exists
+    payload = {}
 
-    if cf_phone
-      if issue && issue.custom_value_for(cf_phone).present? && issue.custom_value_for(cf_phone).value.present?
-        destination = issue.custom_value_for(cf_phone).value
-      elsif callee.custom_value_for(cf_phone).present? && callee.custom_value_for(cf_phone).value.present?
-        destination = callee.custom_value_for(cf_phone).value
+    if destination.start_with?('user://')
+      begin
+        user_id = destination.gsub('user://', '')
+        destination_user = User.find(user_id)
+        project = Project.find(project_id) if project_id.present?
+      rescue ActiveRecord::RecordNotFound => e
+        render json: { success: false, msg: "Could not find user or project: #{e.message}" }
+        return
       end
-    end
 
-    destination ||= callee.login # Fallback to callee.login if no custom field value found
+      member_role_name = settings['project_group_member_role']
+      user_has_role = false
+      if project && member_role_name.present?
+        user_has_role = destination_user.roles_for_project(project).any? { |role| role.name == member_role_name }
+      end
 
-    # Check project membership (only if project is present)
-    caller_is_member = project.present? && caller.projects.include?(project)
-    callee_is_member = project.present? && callee.projects.include?(project)
-
-    payload = {
-      user_name: caller.login,
-      destination: destination
-    }
-
-    if project.present? && caller_is_member && !callee_is_member
-      payload[:group_name] = project.name
+      if user_has_role
+        payload = { destination: destination_user.login, user_name: user_name }
+      else
+        payload = { destination: destination_user.login, user_name: user_name, group_name: group_name }
+      end
+    else
+      payload = { destination: destination, user_name: user_name }
     end
 
     begin
