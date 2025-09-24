@@ -6,6 +6,7 @@ module Basix
 
       current_user_id = user.id
       current_user_login = user.login
+      current_user_email = user.mail
       base_uri = Redmine::Utils.relative_url_root
       project = context[:project]
       project_id = project&.id || 'null'
@@ -56,6 +57,7 @@ module Basix
 
           var currentUserId = %{current_user_id};
           var currentUserLogin = %{current_user_login};
+          var currentUserEmail = '%{current_user_email}';
           var baseUri = '%{base_uri}';
           var projectId = %{project_id};
           var projectName = %{project_name};
@@ -114,7 +116,8 @@ module Basix
               confirmName = projectName;
               data = {
                 destination: projectName,
-                user_name: currentUserLogin
+                user_name: currentUserLogin,
+                user_email: currentUserEmail
               };
             } else {
               // Call user
@@ -122,6 +125,7 @@ module Basix
               data = {
                 destination: 'user://' + userId,
                 user_name: currentUserLogin,
+                user_email: currentUserEmail,
                 group_name: projectName,
                 project_id: projectId
               };
@@ -157,7 +161,7 @@ module Basix
         });
       JS
 
-      js = js_template % { current_user_id: current_user_id, current_user_login: current_user_login.to_json, base_uri: base_uri, project_id: project_id, project_name: project_name.to_json, issue_id: issue_id, user_has_role: user_has_role }
+      js = js_template % { current_user_id: current_user_id, current_user_login: current_user_login.to_json, current_user_email: current_user_email, base_uri: base_uri, project_id: project_id, project_name: project_name.to_json, issue_id: issue_id, user_has_role: user_has_role }
 
       "<script type=\"text/javascript\">#{javascript_cdata_section(js)}</script>"
     end

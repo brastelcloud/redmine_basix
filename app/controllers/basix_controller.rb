@@ -21,6 +21,7 @@ class BasixController < ApplicationController
 
     destination = params[:destination]
     user_name = params[:user_name]
+    user_email = params[:user_email]
     group_name = params[:group_name]
     project_id = params[:project_id]
 
@@ -43,12 +44,12 @@ class BasixController < ApplicationController
       end
 
       if user_has_role
-        payload = { destination: destination_user.login, user_name: user_name }
+        payload = { destination: destination_user.login, user_name: user_name, user_email: user_email}
       else
-        payload = { destination: destination_user.login, user_name: user_name, group_name: group_name }
+        payload = { destination: destination_user.login, user_name: user_name, user_email: user_email, group_name: group_name }
       end
     else
-      payload = { destination: destination, user_name: user_name }
+      payload = { destination: destination, user_name: user_name, user_email: user_email }
     end
 
     begin
