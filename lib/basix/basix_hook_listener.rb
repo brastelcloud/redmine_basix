@@ -24,7 +24,7 @@ module Basix
 
       js_template = <<~'JS'
         function showFlashMessage(type, message) {
-          var flashDiv = $('<div class="flash ' + type + '"></div>');
+          var flashDiv = $('<div class="flash " + type + ""></div>');
           var closeButton = $('<a href="#" class="close">×</a>');
           closeButton.on('click', function(e) {
             e.preventDefault();
@@ -40,6 +40,9 @@ module Basix
         }
 
         $(document).ready(function() {
+          var modal_html = '<div id="basix-confirm-modal" style="display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%%; height: 100%%; background-color: rgba(0,0,0,0.5);"><div style="position: fixed; top: 50%%; left: 50%%; transform: translate(-50%%, -50%%); background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"><p id="basix-confirm-message"></p><button id="basix-confirm-yes">Yes</button> <button id="basix-confirm-no">No</button></div></div>';
+          $('body').append(modal_html);
+
           var currentUserId = %{current_user_id};
           var currentUserLogin = %{current_user_login};
           var baseUri = '%{base_uri}';
@@ -113,7 +116,12 @@ module Basix
               };
             }
 
-            if (confirm('Do you really want to call ' + confirmName + '?')) {
+            // Show custom confirm
+            $('#basix-confirm-message').text('Do you really want to call ' + confirmName + '?');
+            $('#basix-confirm-modal').show();
+
+            $('#basix-confirm-yes').off('click').on('click', function() {
+              $('#basix-confirm-modal').hide();
               $.ajax({
                 url: baseUri + '/basix/call_user',
                 type: 'POST',
@@ -129,7 +137,11 @@ module Basix
                   alert('Error communicating with the server.');
                 }
               });
-            }
+            });
+
+            $('#basix-confirm-no').off('click').on('click', function() {
+              $('#basix-confirm-modal').hide();
+            });
           });
         });
       JS
