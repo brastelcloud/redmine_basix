@@ -4,6 +4,10 @@ module Basix
       user = User.current
       return '' unless user && user.logged?
 
+      controller = context[:controller]
+      return '' unless controller.is_a?(IssuesController)
+      return '' unless controller.action_name == 'show'
+
       current_user_id = user.id
       current_user_login = user.login
       current_user_email = user.mail
@@ -171,10 +175,8 @@ module Basix
                 type: 'POST',
                 data: data,
                 success: function(response) {
-                  if (response.success) {
-                    showBasixNotification(response.msg);
-                  } else {
-                    showBasixNotification('Error: ' + (response.msg || 'Failed to initiate call.'));
+                  if (response.result_code != 0) {
+                    showBasixNotification('Error: ' + (response.error.id || 'Failed to initiate call.'));
                   }
                 },
                 error: function() {

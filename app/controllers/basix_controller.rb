@@ -49,7 +49,7 @@ class BasixController < ApplicationController
         payload = { destination: destination_user.login, user_name: user_name, user_email: user_email, group_name: group_name }
       end
     else
-      payload = { destination: destination, user_name: user_name, user_email: user_email }
+      payload = { destination: destination, user_name: user_name, user_email: user_email, group_name: group_name }
     end
 
     begin
