@@ -29,6 +29,8 @@ and set values according to your account (contact Basix Support Center for detai
  
 ![basix_redmine configuration](./images/redmine_basix.configuration.png)
 
+For this plugin to work, it is necessary that the users at Basix and Redmine have the same login name. So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
+
 ## Uninstallation 
 
 To remove this plugin just delete the folder redmine/plugins/redmine_basix
