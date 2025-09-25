@@ -1,10 +1,10 @@
 # redmine_basix
 
-## Overiview
+## Overview
 
 This is a Redmine plugin for integration with Basix PBX.
 
-It permits to initiate calls by clicking on icons that will show up in the pages:
+It permits to initiate calls by clicking on icons that will show up in the issue pages:
 
 ![basix_redmine phone_icons](./images/redmine_basix.phone_icons.png)
 
@@ -25,9 +25,11 @@ To install it, do it as usual:
 
 To configure, go to http://YOUR_REDMINE_SERVER/settings/plugin/redmine_basix
 
-and set values (contact Basix Support Center for details):
+and set values according to your account (contact Basix Support Center for details):
  
 ![basix_redmine configuration](./images/redmine_basix.configuration.png)
+
+For this plugin to work, it is necessary that the users at Basix and Redmine have the same login name. So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
 
 ## Uninstallation 
 
