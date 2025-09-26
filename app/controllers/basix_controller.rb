@@ -43,13 +43,17 @@ class BasixController < ApplicationController
         user_has_role = destination_user.roles_for_project(project).any? { |role| role.name == member_role_name }
       end
 
-      if user_has_role
-        payload = { destination: destination_user.login, user_name: user_name, user_email: user_email}
-      else
-        payload = { destination: destination_user.login, user_name: user_name, user_email: user_email, group_name: group_name }
+      payload = { destination: destination_user.login, user_name: user_name, user_email: user_email}
+      if not user_has_role
+        if group_name then
+          payload[:group_name] = group_name
+        end
       end
     else
-      payload = { destination: destination, user_name: user_name, user_email: user_email, group_name: group_name }
+      payload = { destination: destination, user_name: user_name, user_email: user_email }
+      if group_name then
+        payload[:group_name] = group_name
+      end
     end
 
     begin
