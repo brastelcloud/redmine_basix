@@ -36,16 +36,24 @@ For this plugin to work, it is necessary that the users at Basix and Redmine hav
 
 So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
 
-## Tips
+## Usage
 
-You can add a custom field phone_number in the issue element. If this field is filled, we will also add a phone icon for it and this will permit to make calls to that number.
+To make calls, simply click on the phone icon near the name of the person you want to call.
+This will make a call to your terminal and after you answer it (or after your terminal auto-answers the call), we will call that person.
+
+You can also add a custom field phone_number in the issue element. 
+If this field is filled, we will also add a phone icon for it and this will permit to make calls to that number.
 The field can be filled with a fixed or mobile number like '0311112222' or '09033334444' but can also be filled with an extension number like '1234' or even a user name like 'john' (actually, any destination is valid).
 
 This will permit for example to handle tickets for external customers and also to set the internal customer in case they don't use redmine.
 
-The calls will go out as group call which means:
+If the current user is a member of the project group, calls will go out as group call which means:
   - for external calls (calls to PSTN, fixed or mobile number) the group calling_number will be used
   - for internal calls (calls to other users) the group name should show up in the callee terminal (OBS: this is not ready yet).
+
+Otherwise if the current user is not a member of the project group:
+  - calling the phone_number will not be allowed (no phone icon will appear for it)
+  - clicking on the icon near the person's name will make a call to the group, not to that person.
 
 ## Uninstallation 
 
