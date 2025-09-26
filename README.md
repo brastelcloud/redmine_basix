@@ -45,6 +45,8 @@ You can also add a custom field phone_number in the issue element.
 If this field is filled, we will also add a phone icon for it and this will permit to make calls to that number.
 The field can be filled with a fixed or mobile number like '0311112222' or '09033334444' but can also be filled with an extension number like '1234' or even a user name like 'john' (actually, any destination is valid).
 
+Obs: in a planned future release we will allow to identify the corresponding user at the other system using the user email address.
+
 This will permit for example to handle tickets for external customers and also to set the internal customer in case they don't use redmine.
 
 If the current user is a member of the project group, calls will go out as group call which means:
