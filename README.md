@@ -37,6 +37,7 @@ For this plugin to work, it is necessary that the users at Basix and Redmine hav
 So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
 
 Obs: in a planned future release we will allow to identify the corresponding user at the other system using the user email address.
+So basix user 'john' will be the same as redmine user 'johnny' if their email address is the same at both sides.
 
 ## Usage
 
