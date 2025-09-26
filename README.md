@@ -8,7 +8,7 @@ It permits to initiate calls by clicking on phone icons that will show up in the
 
 ![basix_redmine phone_icons](./images/redmine_basix.phone_icons.png)
 
-It also converts urls for basix callrecording/voicemail wav and mp3 files in links to audio tags so that the files can be listened to without leaving the current page:
+It also converts urls for basix callrecording/voicemail wav and mp3 files into links to audio tags so that the files can be listened to without leaving the current page:
 
 ![basix_redmine media_player](./images/redmine_basix.media_player.png)
 
@@ -54,8 +54,8 @@ If the current user is a member of the project group, calls will go out as group
   - for internal calls (calls to other users) the group name should show up in the callee terminal (OBS: this is not ready yet).
 
 Otherwise if the current user is not a member of the project group:
-  - calling the phone_number will not be allowed (no phone icon will appear for it)
-  - clicking on the icon near the person's name will make a call to the group, not to that person.
+  - calling the phone_number will not be allowed (no phone icon will appear for it). This is because usually, the phone_number will be their own, but if it is not, non-members should not be allowed to call such numbers as they would impersonate a group member.
+  - clicking on the icon near the person's name will make a call to the group, not to that person. This is because non-grup members should not be able to call group members. Instead they should always call the group.
 
 ## Uninstallation 
 
