@@ -8,7 +8,10 @@ It permits to initiate calls by clicking on phone icons that will show up in the
 
 ![basix_redmine phone_icons](./images/redmine_basix.phone_icons.png)
 
-It also converts comments' wav, mp3, ogg links to audio tags so that the files can be listened to without leaving the current page.
+It also converts urls for basix callrecording/voicemail wav and mp3 files in links to audio tags so that the files can be listened to without leaving the current page:
+
+![basix_redmine media_player](./images/redmine_basix.media_player.png)
+
 
 ## Installation and configuration
 
