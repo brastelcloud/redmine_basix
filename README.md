@@ -36,6 +36,8 @@ For this plugin to work, it is necessary that the users at Basix and Redmine hav
 
 So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
 
+Obs: in a planned future release we will allow to identify the corresponding user at the other system using the user email address.
+
 ## Usage
 
 To make calls, simply click on the phone icon near the name of the person you want to call.
@@ -44,8 +46,6 @@ This will make a call to your terminal and after you answer it (or after your te
 You can also add a custom field phone_number in the issue element. 
 If this field is filled, we will also add a phone icon for it and this will permit to make calls to that number.
 The field can be filled with a fixed or mobile number like '0311112222' or '09033334444' but can also be filled with an extension number like '1234' or even a user name like 'john' (actually, any destination is valid).
-
-Obs: in a planned future release we will allow to identify the corresponding user at the other system using the user email address.
 
 This will permit for example to handle tickets for external customers and also to set the internal customer in case they don't use redmine.
 
