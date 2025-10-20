@@ -32,12 +32,16 @@ and set values according to your account (contact Basix Support Center for detai
  
 ![basix_redmine configuration](./images/redmine_basix.configuration.png)
 
-For this plugin to work, it is necessary that the users at Basix and Redmine have the same login name. 
-
-So if your user name at Basix is 'john', your Redmine user login name should also be 'john'.
+For this plugin to work, it is necessary that:
+  - the group name at basix must be the same as the project name in redmine
+  - the basix user name must be the same as redmine user login name.
+  
+So if your user name at basix is 'john', your Redmine user login name should also be 'john'.
 
 Obs: in a planned future release we will allow to identify the corresponding user at the other system using the user email address.
 So basix user 'john' will be the same as redmine user 'johnny' if their email address is the same at both sides.
+
+Also, if you handle external customers or users that don't have access to redmine and open issues on their behalf, you can include custom field phone_number in the project and you can fill it with the PSTN nuber, extension number or basix name of the user and the phone icon will appear for it.
 
 ## Usage
 
@@ -50,11 +54,11 @@ The field can be filled with a fixed or mobile number like '0311112222' or '0903
 
 This will permit for example to handle tickets for external customers and also to set the internal customer in case they don't use redmine.
 
-If the current user is a member of the project group, calls will go out as group call which means:
+If the current user is a member of the project with role 'developer', calls will go out as group call which means:
   - for external calls (calls to PSTN, fixed or mobile number) the group calling_number will be used
   - for internal calls (calls to other users) the group name should show up in the callee terminal (OBS: this is not ready yet).
 
-Otherwise if the current user is not a member of the project group:
+Otherwise if the current user is not a member of the project or doesn't have the role 'developer' in the project:
   - calling the phone_number will not be allowed (no phone icon will appear for it). This is because usually, the phone_number will be their own, but if it is not, non-members should not be allowed to call such numbers as they would impersonate a group member.
   - clicking on the icon near the person's name will make a call to the group, not to that person. This is because non-grup members should not be able to call group members. Instead they should always call the group.
 
